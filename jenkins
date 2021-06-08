@@ -1,42 +1,30 @@
-stages {
-        stage('Plan') {
-            steps {
-                script {
-                    currentBuild.displayName = params.version
-                }
-                sh 'terraform init -input=false'
-                sh 'terraform workspace select ${environment}'
-                sh "terraform plan -input=false -out tfplan -var 'version=${params.version}' --var-file=environments/${params.environment}.tfvars"
-                sh 'terraform show -no-color tfplan > tfplan.txt'
-            }
-        }
+pipeline {
+    agent any
 
-        stage('Approval') {
-            when {
-                not {
-                    equals expected: true, actual: params.autoApprove
+    stages {
+        stage('Checkout') {
+        steps {
+            checkout scm
+            script {          
+                git branch: 'Main', credentialsId: 'Git', url: 'https://github.com/YogeshBaldha/ColudboostTest-Jenkins.git'
                 }
             }
-
+        }          
+        stage('Build') {
+            steps {                
+                sh "terraform init -input=false"
+                sh "terraform plan -out tfplan -input=false -var-file='terraform.tfvars'"          
+            }
+        }               
+        stage('Test') {
             steps {
-                script {
-                    def plan = readFile 'tfplan.txt'
-                    input message: "Do you want to apply the plan?",
-                        parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-                }
+                echo 'Testing..'
             }
         }
-
-        stage('Apply') {
+        stage('Deploy') {
             steps {
-                sh "terraform apply -input=false tfplan"
+                echo 'Deploying....'
             }
-        }
-    }
-
-    post {
-        always {
-            archiveArtifacts artifacts: 'tfplan.txt'
         }
     }
 }
