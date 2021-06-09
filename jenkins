@@ -6,7 +6,7 @@ pipeline {
         steps {
             checkout scm
             script {          
-                git branch: 'Main', credentialsId: 'Git', url: 'https://github.com/gkoothuru1/terraform_jenkins.git'
+                git branch: 'main', credentialsId: 'Git', url: 'https://github.com/gkoothuru1/terraform_jenkins.git'
                 }
             }
         }          
