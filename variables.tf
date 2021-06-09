@@ -1,51 +1,52 @@
-variable "region" {
-  description = "Location/region where the KeyVault will be created (for a list of regions see https://azure.microsoft.com/regions)"
-  default     = "southcentralus"
-}
-
-variable "keyvault_name" {
-  description = "Name of the keyvault to create"
-  default     = "acctkeyvault"
-}
-
-variable "keyvault_sku" {
-  description = "SKU of the keyvault to create"
-  default     = "standard"
-}
-
 variable "resource_group_name" {
-  description = "Default resource group name that the network will be created in."
-  default     = "myapp-rg"
+  type        = "string"
+  description = "Name of the azure resource group."
 }
 
-variable "tenant_id" {
-  description = "The UID of the Azure Tenant where the KeyVault is deployed."
-  default     = ""
+variable "resource_group_location" {
+  type        = "string"
+  description = "Location of the azure resource group."
 }
 
-variable "purge_protection_enabled" {
-  description = "See https://www.terraform.io/docs/providers/azurerm/r/key_vault.html#purge_protection_enabled"
-  default     = false
+variable "dns_name_prefix" {
+  type        = "string"
+  description = "Sets the domain name prefix for the cluster. The suffix 'master' will be added to address the master agents and the suffix 'agent' will be added to address the linux agents."
 }
 
-variable "soft_delete_enabled" {
-  description = "See https://www.terraform.io/docs/providers/azurerm/r/key_vault.html#soft_delete_enabled"
-  default     = false
+variable "linux_agent_count" {
+  type        = "string"
+  default     = "1"
+  description = "The number of Kubernetes linux agents in the cluster. Allowed values are 1-100 (inclusive). The default value is 1."
 }
 
-variable "network_acls" {
-  description = "Keyvault network ACL; there may be only 1 item in the set."
-  default     = []
-  type        = set(object({
-    default_action             = string
-    bypass                     = string
-    ip_rules                   = list(string)
-    virtual_network_subnet_ids = list(string)
-  }))
+variable "linux_agent_vm_size" {
+  type        = "string"
+  default     = "Standard_D2_v2"
+  description = "The size of the virtual machine used for the Kubernetes linux agents in the cluster."
 }
 
-variable "tags" {
-  description = "Map of tags to add all keyvault resources"
-  default     = {}
+variable "linux_admin_username" {
+  type        = "string"
+  description = "User name for authentication to the Kubernetes linux agent virtual machines in the cluster."
 }
 
+variable "linux_admin_ssh_publickey" {
+  type        = "string"
+  description = "Configure all the linux virtual machines in the cluster with the SSH RSA public key string. The key should include three parts, for example 'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm'"
+}
+
+variable "master_count" {
+  type        = "string"
+  default     = "1"
+  description = "The number of Kubernetes masters for the cluster. Allowed values are 1, 3, and 5. The default value is 1."
+}
+
+variable "service_principal_client_id" {
+  type        = "string"
+  description = "The client id of the azure service principal used by Kubernetes to interact with Azure APIs."
+}
+
+variable "service_principal_client_secret" {
+  type        = "string"
+  description = "The client secret of the azure service principal used by Kubernetes to interact with Azure APIs."
+}
