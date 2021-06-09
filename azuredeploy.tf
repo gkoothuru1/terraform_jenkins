@@ -1,5 +1,5 @@
 variable "linux_agent_vm_size_allowedvalues" {
-  type = "map"
+  type = map
 
   default = {
     "Standard_A0"     = "Standard_A0"
